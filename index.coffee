@@ -2,7 +2,7 @@ through  = require('through2')
 gutil    = require('gulp-util')
 md2json  = require('./lib/md2json')
 
-module.exports = (insertText) ->
+module.exports = ->
   'use strict'
 
   flush = ->
