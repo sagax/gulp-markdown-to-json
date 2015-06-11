@@ -1,11 +1,14 @@
-through  = require('through2')
-gutil    = require('gulp-util')
-md2json  = require('./lib/md2json')
+through  = require 'through2'
+gutil    = require 'gulp-util'
+md2json  = require './lib/md2json'
 
-module.exports = ->
+module.exports = (options) ->
   'use strict'
 
-  flush = ->
+  flush = (callback) ->
+    console.log 'flush file is run'
+    @push md2json.file
+    callback()
     return
 
   transform = (file, enc, callback) ->
@@ -18,7 +21,7 @@ module.exports = ->
       )
       return callback()
     if file.isBuffer()
-      md2json.compile file
+      md2json.convert file, options
     callback()
 
   through.obj transform, flush
