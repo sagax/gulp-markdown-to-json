@@ -1,6 +1,6 @@
-through  = require 'through2'
-gutil    = require 'gulp-util'
-md2json  = require './lib/md2json'
+through = require 'through2'
+gutil   = require 'gulp-util'
+md2json = require './lib/md2json'
 
 module.exports = (options) ->
   'use strict'
