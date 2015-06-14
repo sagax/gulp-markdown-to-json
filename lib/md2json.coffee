@@ -14,27 +14,64 @@ regexp_collection =
   'empty':      /^$/i
   'image':      /!\[(\w|\s)+\]\((\w|\/)+\.\w+(\)|\s"(\w|\s)+"\))/i
   'link':       /(^|[^!])\[(\w|\s)+\]\((\w|\/)+\.\w+(\)|\s"(\w|\s)+"\))/i
-  'list':       /^(\*|\-|\d+)\s(\w|\W)+/
+  'list':       /^(\*|\-|\d{1,}\.)\s(\w|\W)+/
   'blockquote': /^>\s(\w|\W)+/
   'paragraph':  /^\w{1,}/
   'code':       /```(\w|\W)+```/i
 
+regexp_entry_collection =
+  'h': /#/
+  'new_line': /\n/
+
 error_collection = []
 
-parser_first = (line) ->
-  item = {}
-  item.text = line
-  item.status = false
+find_entry = (text, index, key) ->
+  entry_count = 0
+  index = index
+  full_string = text[index]
 
-  for key, value of regexp_collection
-    if value.test item.text
-      console.log item.text + ' \t IS \t ' + key
-      item.status = true
+  if key is 'h'
+    fregexp = regexp_entry_collection[key]
+    console.log 'FIND RUN:'
+    while fregexp.test(text[index]) is true
+      entry_count += 1
+      index += 1
+      full_string += text[index]
 
-  if item.status is false
-    error_collection.push item.text
+  console.log 'entry_count: ' + entry_count + ' : ' + 'index: ' + index + ' :: ' + full_string
+
   return
 
+parse = (text, index, callback) ->
+  chunk = text[index]
+  callback(null, 1)
+  for k, v of regexp_entry_collection
+    if v.test(chunk) is true and k is 'h'
+      find_entry text, index, k
+  return
+
+analysis = (text) ->
+  item = {}
+  item.text = text
+  item.status = false
+  item.length = text.length
+
+  index = 0
+
+  change_index = (action, new_index) ->
+    if action is false or action is null or action is undefined
+      index += new_index
+    while index < item.length
+      run_parse()
+    return
+
+  run_parse = ->
+    parse item.text, index, change_index
+    return
+
+  run_parse()
+
+  return
 
 worker = {}
 worker.convert = (file, options) ->
@@ -43,12 +80,8 @@ worker.convert = (file, options) ->
   self = @
 
   text = file.contents.toString()
-  lines = text.split('\n')
 
-  for line in lines
-    do (line) ->
-      parser_first line
-      return
+  analysis text
 
   console.log error_collection
 
