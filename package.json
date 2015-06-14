@@ -34,7 +34,8 @@
     "mocha-lcov-reporter": "*",
     "istanbul": "*",
     "event-stream": "*",
-    "should": "~2.1.0"
+    "should": "~2.1.0",
+    "prettyjson": "*"
   },
   "engines": {
     "node": ">=0.8.0",

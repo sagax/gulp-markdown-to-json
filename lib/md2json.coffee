@@ -1,89 +1,62 @@
 'use strict'
 
-regexp_collection =
-  'h1':         /^#{1}\s.+/i
-  'h2':         /^#{2}\s.+/i
-  'h3':         /^#{3}\s.+/i
-  'h4':         /^#{4}\s.+/i
-  'h5':         /^#{5}\s.+/i
-  'h6':         /^#{6}\s.+/i
-  'h7':         /^#{7}\s.+/i
-  'italic':     /(^|\s)\*{1}\w+\*{1}(\w|\W)*/i
-  'bold':       /(^|\s)\*{2}\w+\*{2}(\w|\W)*/i
-  'dashe':      /^(-|\*){3,}$/i
-  'empty':      /^$/i
-  'image':      /!\[(\w|\s)+\]\((\w|\/)+\.\w+(\)|\s"(\w|\s)+"\))/i
-  'link':       /(^|[^!])\[(\w|\s)+\]\((\w|\/)+\.\w+(\)|\s"(\w|\s)+"\))/i
-  'list':       /^(\*|\-|\d{1,}\.)\s(\w|\W)+/
-  'blockquote': /^>\s(\w|\W)+/
-  'paragraph':  /^\w{1,}/
-  'code':       /```(\w|\W)+```/i
-
-regexp_entry_collection =
-  'h': /#/
-  'new_line': /\n/
-
-error_collection = []
-
-find_entry = (text, index, key) ->
-  entry_count = 0
-  index = index
-  full_string = text[index]
-
-  if key is 'h'
-    fregexp = regexp_entry_collection[key]
-    console.log 'FIND RUN:'
-    while fregexp.test(text[index]) is true
-      entry_count += 1
-      index += 1
-      full_string += text[index]
-
-  console.log 'entry_count: ' + entry_count + ' : ' + 'index: ' + index + ' :: ' + full_string
-
-  return
-
-parse = (text, index, callback) ->
-  chunk = text[index]
-  callback(null, 1)
-  for k, v of regexp_entry_collection
-    if v.test(chunk) is true and k is 'h'
-      find_entry text, index, k
-  return
-
-analysis = (text) ->
-  item = {}
-  item.text = text
-  item.status = false
-  item.length = text.length
-
-  index = 0
-
-  change_index = (action, new_index) ->
-    if action is false or action is null or action is undefined
-      index += new_index
-    while index < item.length
-      run_parse()
-    return
-
-  run_parse = ->
-    parse item.text, index, change_index
-    return
-
-  run_parse()
-
-  return
-
 worker = {}
 worker.convert = (file, options) ->
   console.log 'worker is run'
-
   self = @
-
   text = file.contents.toString()
 
-  analysis text
+  regexp =
+    'h': /#/
+    'new_line': /\n/
+    'space': /\s/
 
-  console.log error_collection
+  get_text = (text) ->
+    length = text.length
+    index = 0
+    text_part = []
+    text_result = ''
+    item_block = {}
+    item_block.content = []
+
+    run_find = ->
+      find_entry text, index, change_index, push_to_block
+      return
+
+    push_to_block = (part) ->
+      item_block.content.push part
+
+    change_index = (new_index) ->
+      index = new_index
+      if index < length
+        run_find()
+      else
+        console.log JSON.stringify(item_block)
+      return
+
+    run_find()
+
+    return
+
+  find_all_block = (text, index, v, callback, callback2) ->
+    text = text
+    index = index
+    full_part = ''
+    while v.test(text[index]) is true
+      full_part += text[index]
+      index += 1
+    console.log 'FP: ' + full_part
+    callback2(full_part)
+    callback(index)
+    return
+
+  find_entry = (text, index, callback, callback2) ->
+    for k, v of regexp
+      if v.test(text[index])
+        find_all_block text, index, v, callback, callback2
+    return
+
+  get_text text
 
   worker.file = file
   return
