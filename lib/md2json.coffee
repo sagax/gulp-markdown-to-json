@@ -2,63 +2,54 @@
 
 worker = {}
 worker.convert = (file, options) ->
-  console.log 'worker is run'
   self = @
-  text = file.contents.toString()
+  document = file.contents.toString()
+  open = false
+  after_open = false
+  block = {}
+  content = ''
+  name = ''
+  key = ''
+  iter = 0
+  length = document.length
 
-  regexp =
-    'h': /#/
-    'new_line': /\n/
-    'space': /\s/
+  for i in document
+    if i is '{' and after_open is false
+      open = true
+    else if i is '{' and after_open is true
+      open = true
+      after_open = false
+      block[key]['content'] = content
+      content = ''
+      name = ''
+    else if iter is length-1
+      block[key]['content'] = content
 
-  get_text = (text) ->
-    length = text.length
-    index = 0
-    text_part = []
-    text_result = ''
-    item_block = {}
-    item_block.content = []
+    if open is true
+      name += i
+    else
+      content += i
 
-    run_find = ->
-      find_entry text, index, change_index, push_to_block
-      return
-
-    push_to_block = (part) ->
-      item_block.content.push part
-
-    change_index = (new_index) ->
-      index = new_index
-      if index < length
-        run_find()
+    if i is '}'
+      open = false
+      after_open = true
+      name = name.replace /{|}/gi, ''
+      if /:/gi.test name
+        name  = name.split ':'
+        key   = name[0]
+        value = name[1]
+        block[key] = {}
+        block[key]['name'] = key
+        block[key]['value'] = JSON.parse value
       else
-        console.log JSON.stringify(item_block)
-      return
+        key = name.replace /{|}/gi, ''
+        block[key] = {}
+        block[key]['name'] = name
+      name = ''
 
-    run_find()
+    iter += 1
 
-    return
-
-  find_all_block = (text, index, v, callback, callback2) ->
-    text = text
-    index = index
-    full_part = ''
-    while v.test(text[index]) is true
-      full_part += text[index]
-      index += 1
-    console.log 'FP: ' + full_part
-    callback2(full_part)
-    callback(index)
-    return
-
-  find_entry = (text, index, callback, callback2) ->
-    for k, v of regexp
-      if v.test(text[index])
-        find_all_block text, index, v, callback, callback2
-    return
-
-  get_text text
-
-  worker.file = file
+  worker.file = JSON.stringify(block)
   return
 
 module.exports = worker

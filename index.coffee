@@ -6,7 +6,6 @@ module.exports = (options) ->
   'use strict'
 
   flush = (callback) ->
-    console.log 'flush file is run'
     @push md2json.file
     callback()
     return
@@ -14,12 +13,12 @@ module.exports = (options) ->
   transform = (file, enc, callback) ->
     if file.isNull()
       @push file
-      return callback()
+      callback()
     if file.isStream()
       @emit 'error', new (gutil.PluginError)(
         'Stream content is not supported'
       )
-      return callback()
+      callback()
     if file.isBuffer()
       md2json.convert file, options
     callback()
