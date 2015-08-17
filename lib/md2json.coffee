@@ -49,7 +49,9 @@ worker.convert = (file, options) ->
 
     iter += 1
 
-  worker.file = JSON.stringify(block)
+  file.contents = new Buffer(JSON.stringify(block))
+  file.path = file.path.replace(/.md$/, '.json')
+  worker.file = file
   return
 
 module.exports = worker

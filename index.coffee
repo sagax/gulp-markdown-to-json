@@ -21,6 +21,7 @@ module.exports = (options) ->
       callback()
     if file.isBuffer()
       md2json.convert file, options
+      @push md2json.file
     callback()
 
-  through.obj transform, flush
+  through.obj transform
