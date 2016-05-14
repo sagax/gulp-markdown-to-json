@@ -2,26 +2,27 @@ through = require 'through2'
 gutil   = require 'gulp-util'
 md2json = require './lib/md2json'
 
-module.exports = (options) ->
-  'use strict'
+'use strict'
 
-  flush = (callback) ->
-    @push md2json.file
-    callback()
+module.exports = (options) ->
+  options = options or {}
+
+  flush = (err) ->
     return
 
-  transform = (file, enc, callback) ->
+  transform = (file, enc, cb) ->
     if file.isNull()
       @push file
-      callback()
+
     if file.isStream()
-      @emit 'error', new (gutil.PluginError)(
-        'Stream content is not supported'
-      )
-      callback()
+      @emit 'error', new gutil.PluginError 'Stream content is not supported'
+
     if file.isBuffer()
       md2json.convert file, options
       @push md2json.file
-    callback()
 
-  through.obj transform
+    if cb
+      cb()
+    return
+
+  through.obj transform, flush

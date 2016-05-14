@@ -1,45 +1,28 @@
-# h1
+{title:hiall}
+# Markdown
 
-## h2
+{desc}
+### cheatsheet
 
-### h3
+{link}
+https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
+Markdown Cheatsheet
+* markdown
+* cheatsheet
+* github
 
-#### h4
+{link}
+http://assemble.io/docs/Cheatsheet-Markdown.html
+Markdown Cheatsheet
+* markdown
+* cheatsheet
 
-##### h5
+{desc:all}
+### markdown online editors
 
-###### h6
-
-*italic*
-
-**bold**
-
----
-
-***
-
-![alt text](/path/img.jpg)
-
-![alt text](/path/img.jpg "Title image")
-
-[link one](/path/img.jpg)
-
-[link two](/path/img.jpg "Title image")
-
-* one
-* two
-* thr
-
-1. one
-2. two
-3. thr
-
-- one
-- two
-- thr
-
-> blockquote
-
-I paragraph
-
-``` code ```
+{link}
+http://dillinger.io
+Dillinger is an online cloud-enabled, HTML5, buzzword-filled Markdown editor.
+* markdown
+* online
+* editor
