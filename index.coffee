@@ -1,10 +1,11 @@
 through = require 'through2'
 gutil   = require 'gulp-util'
 md2json = require './lib/md2json'
+prettyjson = require 'prettyjson'
 
 'use strict'
 
-module.exports = (options) ->
+main = (options) ->
   options = options or {}
 
   flush = (err) ->
@@ -26,3 +27,5 @@ module.exports = (options) ->
     return
 
   through.obj transform, flush
+
+module.exports = main
