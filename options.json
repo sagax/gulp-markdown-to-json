@@ -1,0 +1,32 @@
+{
+  "items": [
+    {
+      "item_name": "#",
+      "item_desc": "##",
+      "links": [
+        {
+          "url": "http",
+          "desc": "",
+          "tags": [
+            "*"
+          ]
+        }
+      ],
+      "parts": [
+        {
+          "part_name": "###",
+          "part_desc": "####",
+          "links": [
+            {
+              "url": "http",
+              "desc": "",
+              "tags": [
+                "*"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
