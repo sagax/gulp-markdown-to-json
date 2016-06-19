@@ -27,3 +27,4 @@ build/Release
 node_modules
 
 /tags
+test.json
